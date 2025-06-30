@@ -21,7 +21,7 @@ class Event(models.Model):
     bride_message = models.TextField(blank=True, null=True)
     bride_image = CloudinaryField('event/bride/', use_filename=True, unique_filename=True, blank=True, null=True)
 
-    # Groom Info
+    # Groom Infor
     groom_first_name = models.CharField(max_length=100, blank=True, null=True)
     groom_last_name = models.CharField(max_length=100, blank=True, null=True)
     groom_message = models.TextField(blank=True, null=True)
