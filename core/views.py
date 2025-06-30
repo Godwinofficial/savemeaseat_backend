@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics
-from .models import Event, RSVP
-from .serializers import EventSerializer
+from .models import Event, RSVP, Bridesmaid, Groomsman
+from .serializers import EventSerializer, BridesmaidSerializer, GroomsmanSerializer
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -43,3 +43,19 @@ def export_rsvp_csv(request, event_slug):
     for rsvp in rsvps:
         writer.writerow([rsvp.full_name, rsvp.phone_number, rsvp.number_of_guests, rsvp.attending, rsvp.created_at])
     return response
+
+class BridesmaidListCreateView(generics.ListCreateAPIView):
+    queryset = Bridesmaid.objects.all()
+    serializer_class = BridesmaidSerializer
+
+class BridesmaidDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bridesmaid.objects.all()
+    serializer_class = BridesmaidSerializer
+
+class GroomsmanListCreateView(generics.ListCreateAPIView):
+    queryset = Groomsman.objects.all()
+    serializer_class = GroomsmanSerializer
+
+class GroomsmanDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Groomsman.objects.all()
+    serializer_class = GroomsmanSerializer

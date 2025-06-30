@@ -1,7 +1,20 @@
 from rest_framework import serializers
-from .models import Event
+from .models import Event, RSVP, Bridesmaid, Groomsman
+
+class BridesmaidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bridesmaid
+        fields = ['id', 'image', 'full_name', 'role']
+
+class GroomsmanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Groomsman
+        fields = ['id', 'image', 'full_name', 'role']
 
 class EventSerializer(serializers.ModelSerializer):
+    bridesmaids = BridesmaidSerializer(many=True, read_only=True)
+    groomsmen = GroomsmanSerializer(many=True, read_only=True)
+
     class Meta:
         model = Event
         fields = [
@@ -24,5 +37,7 @@ class EventSerializer(serializers.ModelSerializer):
             'gift_1', 'gift_2', 'gift_3', 'gift_4', 'gift_5',
             'thank_you_message',
             'slug',
+            'bridesmaids',
+            'groomsmen',
         ]
         read_only_fields = ('slug',)

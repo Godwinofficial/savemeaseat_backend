@@ -127,3 +127,21 @@ class RSVP(models.Model):
 
     def __str__(self):
         return f"{self.full_name} RSVP for {self.event.header_text}"
+
+class Bridesmaid(models.Model):
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='bridesmaids')
+    image = models.ImageField(upload_to='event/bridesmaids/', blank=True, null=True)
+    full_name = models.CharField(max_length=255)
+    role = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.full_name} ({self.role})"
+
+class Groomsman(models.Model):
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='groomsmen')
+    image = models.ImageField(upload_to='event/groomsmen/', blank=True, null=True)
+    full_name = models.CharField(max_length=255)
+    role = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.full_name} ({self.role})"

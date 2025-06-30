@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import EventListCreateView, EventRetrieveUpdateDestroyView
+from .views import BridesmaidListCreateView, BridesmaidDetailView, GroomsmanListCreateView, GroomsmanDetailView
 from . import views
 
 urlpatterns = [
@@ -7,4 +8,8 @@ urlpatterns = [
     path('events/<slug:slug>/', EventRetrieveUpdateDestroyView.as_view(), name='event-detail'),
     path('events/<slug:event_slug>/rsvp/', views.submit_rsvp, name='submit_rsvp'),
     path('events/<slug:event_slug>/rsvp/export/', views.export_rsvp_csv, name='export_rsvp_csv'),
+    path('bridesmaids/', BridesmaidListCreateView.as_view(), name='bridesmaid-list-create'),
+    path('bridesmaids/<int:pk>/', BridesmaidDetailView.as_view(), name='bridesmaid-detail'),
+    path('groomsmen/', GroomsmanListCreateView.as_view(), name='groomsman-list-create'),
+    path('groomsmen/<int:pk>/', GroomsmanDetailView.as_view(), name='groomsman-detail'),
 ]
