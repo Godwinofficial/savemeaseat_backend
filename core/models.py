@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
+
 
 class Event(models.Model):
     # Header Info
@@ -10,53 +12,53 @@ class Event(models.Model):
     country = models.CharField(max_length=100, blank=True, null=True)
 
     # Images
-    center_cover_image = models.ImageField(upload_to='event/cover/', blank=True, null=True)
-    section_image = models.ImageField(upload_to='event/section/', blank=True, null=True)
+    center_cover_image = CloudinaryField('event/cover/', use_filename=True, unique_filename=True, blank=True, null=True)
+    section_image = CloudinaryField('event/section/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Bride Info
     bride_first_name = models.CharField(max_length=100, blank=True, null=True)
     bride_last_name = models.CharField(max_length=100, blank=True, null=True)
     bride_message = models.TextField(blank=True, null=True)
-    bride_image = models.ImageField(upload_to='event/bride/', blank=True, null=True)
+    bride_image = CloudinaryField('event/bride/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Groom Info
     groom_first_name = models.CharField(max_length=100, blank=True, null=True)
     groom_last_name = models.CharField(max_length=100, blank=True, null=True)
     groom_message = models.TextField(blank=True, null=True)
-    groom_image = models.ImageField(upload_to='event/groom/', blank=True, null=True)
+    groom_image = CloudinaryField('event/groom/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Slider Images (up to 6)
-    slider_image_1 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
-    slider_image_2 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
-    slider_image_3 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
-    slider_image_4 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
-    slider_image_5 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
-    slider_image_6 = models.ImageField(upload_to='event/slider/', null=True, blank=True)
+    slider_image_1 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
+    slider_image_2 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
+    slider_image_3 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
+    slider_image_4 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
+    slider_image_5 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
+    slider_image_6 = CloudinaryField('event/slider/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Love Story
     love_story_first_meet_date = models.DateField(blank=True, null=True)
     love_story_first_meet_desc = models.TextField(blank=True, null=True)
-    love_story_first_meet_image = models.ImageField(upload_to='event/love_story/', null=True, blank=True)
+    love_story_first_meet_image = CloudinaryField('event/love_story/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     love_story_first_date_date = models.DateField(blank=True, null=True)
     love_story_first_date_desc = models.TextField(blank=True, null=True)
-    love_story_first_date_image = models.ImageField(upload_to='event/love_story/', null=True, blank=True)
+    love_story_first_date_image = CloudinaryField('event/love_story/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     love_story_proposal_date = models.DateField(blank=True, null=True)
     love_story_proposal_desc = models.TextField(blank=True, null=True)
-    love_story_proposal_image = models.ImageField(upload_to='event/love_story/', null=True, blank=True)
+    love_story_proposal_image = CloudinaryField('event/love_story/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     love_story_engagement_date = models.DateField(blank=True, null=True)
     love_story_engagement_desc = models.TextField(blank=True, null=True)
-    love_story_engagement_image = models.ImageField(upload_to='event/love_story/', null=True, blank=True)
+    love_story_engagement_image = CloudinaryField('event/love_story/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Sweet Moments (up to 6 images)
-    sweet_image_1 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
-    sweet_image_2 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
-    sweet_image_3 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
-    sweet_image_4 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
-    sweet_image_5 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
-    sweet_image_6 = models.ImageField(upload_to='event/sweet/', null=True, blank=True)
+    sweet_image_1 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
+    sweet_image_2 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
+    sweet_image_3 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
+    sweet_image_4 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
+    sweet_image_5 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
+    sweet_image_6 = CloudinaryField('event/sweet/', use_filename=True, unique_filename=True, blank=True, null=True)
 
     # Time and Place Cards (3 cards)
     time_card1_title = models.CharField(max_length=100, blank=True, null=True)
@@ -130,7 +132,7 @@ class RSVP(models.Model):
 
 class Bridesmaid(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='bridesmaids')
-    image = models.ImageField(upload_to='event/bridesmaids/', blank=True, null=True)
+    image = CloudinaryField('event/bridesmaids/', use_filename=True, unique_filename=True, blank=True, null=True)
     full_name = models.CharField(max_length=255)
     role = models.CharField(max_length=100, blank=True, null=True)
 
@@ -139,7 +141,7 @@ class Bridesmaid(models.Model):
 
 class Groomsman(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='groomsmen')
-    image = models.ImageField(upload_to='event/groomsmen/', blank=True, null=True)
+    image = CloudinaryField('event/groomsmen/', use_filename=True, unique_filename=True, blank=True, null=True)
     full_name = models.CharField(max_length=255)
     role = models.CharField(max_length=100, blank=True, null=True)
 

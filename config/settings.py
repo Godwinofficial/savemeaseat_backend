@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'corsheaders',
+    'cloudinary',
 
 ]
 
@@ -134,3 +138,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development; restrict in production
+
+cloudinary.config( 
+  cloud_name = "godwinb", 
+  api_key = "339515159917774", 
+  api_secret = "7hBeCAaSuj2Nm9KabqkH0Ku5Mds",
+  secure = "true", 
+)
