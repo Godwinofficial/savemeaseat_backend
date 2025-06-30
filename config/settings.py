@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'cloudinary',
+    'cloudinary_storage',
 
 ]
 
@@ -145,3 +146,12 @@ cloudinary.config(
   api_secret = "7hBeCAaSuj2Nm9KabqkH0Ku5Mds",
   secure = "true", 
 )
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'godwinb',
+    'API_KEY': '339515159917774',
+    'API_SECRET': '7hBeCAaSuj2Nm9KabqkH0Ku5Mds',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
