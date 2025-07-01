@@ -138,7 +138,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Add this line
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development; restrict in production
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all originss for development; restrict in production
 
 cloudinary.config( 
   cloud_name = "godwinb", 
