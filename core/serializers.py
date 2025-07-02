@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event, RSVP, Bridesmaid, Groomsman
+from .models import Event, RSVP, Bridesmaid, Groomsman, ProgramItem
 
 class BridesmaidSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,9 +11,15 @@ class GroomsmanSerializer(serializers.ModelSerializer):
         model = Groomsman
         fields = ['id', 'image', 'full_name', 'role']
 
+class ProgramItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgramItem
+        fields = ['id', 'time', 'title', 'description']
+
 class EventSerializer(serializers.ModelSerializer):
     bridesmaids = BridesmaidSerializer(many=True, read_only=True)
     groomsmen = GroomsmanSerializer(many=True, read_only=True)
+    program = ProgramItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event
@@ -39,5 +45,6 @@ class EventSerializer(serializers.ModelSerializer):
             'slug',
             'bridesmaids',
             'groomsmen',
+            'program',
         ]
         read_only_fields = ('slug',)

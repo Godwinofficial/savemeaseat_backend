@@ -147,3 +147,13 @@ class Groomsman(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.role})"
+
+class ProgramItem(models.Model):
+    event = models.ForeignKey(Event, related_name='program', on_delete=models.CASCADE)
+    time = models.TimeField()
+    date = models.DateField(blank=True, null=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.time} - {self.title}"
