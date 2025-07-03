@@ -2,6 +2,7 @@ from django.urls import path
 from .views import EventListCreateView, EventRetrieveUpdateDestroyView
 from .views import BridesmaidListCreateView, BridesmaidDetailView, GroomsmanListCreateView, GroomsmanDetailView
 from . import views
+from .views import event_detail_page
 
 urlpatterns = [
     path('events/', EventListCreateView.as_view(), name='event-list-create'),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('bridesmaids/<int:pk>/', BridesmaidDetailView.as_view(), name='bridesmaid-detail'),
     path('groomsmen/', GroomsmanListCreateView.as_view(), name='groomsman-list-create'),
     path('groomsmen/<int:pk>/', GroomsmanDetailView.as_view(), name='groomsman-detail'),
+    path('event/<slug:slug>/', event_detail_page, name='event-detail-page'),
 ]

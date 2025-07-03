@@ -114,6 +114,21 @@ class Event(models.Model):
     def __str__(self):
         return self.header_text
 
+    def get_couple_names(self):
+        return f"{self.bride_first_name or ''} & {self.groom_first_name or ''}".strip()
+
+    @property
+    def first_slider_image_url(self):
+        slider_images = [
+            self.slider_image_1,
+            self.slider_image_2,
+            self.slider_image_3,
+            self.slider_image_4,
+            self.slider_image_5,
+            self.slider_image_6,
+        ]
+        return next((img.url for img in slider_images if img), '/static/default-thumbnail.jpg')
+
 class RSVP(models.Model):
     ATTENDING_CHOICES = (
         ('yes', 'Yes'),

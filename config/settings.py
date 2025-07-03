@@ -28,8 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 #  'django-insecure-!+tihbtuq5%j3)2-fd9d5=sq31=*ayo^(kuh_a&y(v5)qq5y-8'
 
+
+# SECRET_KEY = 'django-insecure-!+tihbtuq5%j3)2-fd9d5=sq31=*ayo^(kuh_a&y(v5)qq5y-8'
+
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# DEBUG = True
 
 # ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
@@ -106,6 +112,34 @@ if not DATABASE_URL:
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
+
+# ...........
+
+
+
+# Base directory
+# BASE_DIR = Path(__file__).resolve().parent.parent
+
+# # Database configuration
+# DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# if DATABASE_URL:
+#     print("✅ Using PostgreSQL database from DATABASE_URL")
+#     DATABASES = {
+#         "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+#     }
+# else:
+#     print("⚠️ DATABASE_URL not set. Using SQLite database instead.")
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+
+
+# .......
+
 
 # "postgresql://savemeaseat_postgres_user:rIYeXRIu6oOPploEszKd1bwMiGw56XAf@dpg-d1if0imr433s73aglmf0-a.oregon-postgres.render.com/savemeaseat_postgres"
 

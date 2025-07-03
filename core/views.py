@@ -6,8 +6,11 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import csv
+import os
 
 # Create your views here.
+
+# NOTE: You must create core/templates/event_detail.html for the event detail page meta tags to work.
 
 class EventListCreateView(generics.ListCreateAPIView):
     queryset = Event.objects.all()
@@ -59,3 +62,17 @@ class GroomsmanListCreateView(generics.ListCreateAPIView):
 class GroomsmanDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Groomsman.objects.all()
     serializer_class = GroomsmanSerializer
+
+# Server-rendered event page for social sharing meta tags
+def event_detail_page(request, slug):
+    """
+    Render a server-side HTML page for an event, including meta tags for social sharing.
+    Meta tags use the couple's names, event description, and the first slider image as the thumbnail.
+    """
+    event = get_object_or_404(Event, slug=slug)
+    return render(request, 'event_detail.html', {
+        'event': event,
+        'couple_names': event.get_couple_names(),
+        'description': event.header_text or '',
+        'thumbnail_url': event.first_slider_image_url,
+    })
