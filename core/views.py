@@ -84,4 +84,4 @@ def event_detail_page(request, slug):
             'thumbnail_url': event.first_slider_image_url,
         })
     
-    return redirect(f'https://savemeaseatzambia.com/wedding.html?slug={slug}/')
+    return redirect(f'https://savemeaseatzambia.com/wedding.html?slug={slug}')
