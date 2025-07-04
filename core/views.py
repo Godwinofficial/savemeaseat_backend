@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework import generics
 from .models import Event, RSVP, Bridesmaid, Groomsman
 from .serializers import EventSerializer, BridesmaidSerializer, GroomsmanSerializer
@@ -66,13 +66,22 @@ class GroomsmanDetailView(generics.RetrieveUpdateDestroyAPIView):
 # Server-rendered event page for social sharing meta tags
 def event_detail_page(request, slug):
     """
-    Render a server-side HTML page for an event, including meta tags for social sharing.
-    Meta tags use the couple's names, event description, and the first slider image as the thumbnail.
+    If the request is from a bot/crawler (for social sharing), render the event_detail.html template with meta tags.
+    Otherwise, redirect to the external wedding page with the event slug as a query parameter.
     """
+    import re
     event = get_object_or_404(Event, slug=slug)
-    return render(request, 'event_detail.html', {
-        'event': event,
-        'couple_names': event.get_couple_names(),
-        'description': event.header_text or '',
-        'thumbnail_url': event.first_slider_image_url,
-    })
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+    # List of common bot/crawler keywords
+    bot_keywords = [
+        'bot', 'crawl', 'slurp', 'spider', 'mediapartners', 'facebookexternalhit', 'twitterbot', 'linkedinbot', 'embedly', 'quora link preview', 'showyoubot', 'outbrain', 'pinterest', 'slackbot', 'vkshare', 'facebot', 'telegrambot', 'applebot', 'yandex', 'baiduspider', 'embed', 'discordbot', 'whatsapp', 'google', 'bing', 'duckduckbot', 'yeti', 'ahrefs', 'semrush', 'mj12bot', 'seznambot', 'sogou', 'exabot', 'ia_archiver'
+    ]
+    if any(bot in user_agent for bot in bot_keywords):
+        return render(request, 'event_detail.html', {
+            'event': event,
+            'couple_names': event.get_couple_names(),
+            'description': event.additional_header_text or event.header_text or '',
+            'thumbnail_url': event.first_slider_image_url,
+        })
+    
+    return redirect(f'https://savemeaseatzambia.com/wedding.html?slug={slug}/')
