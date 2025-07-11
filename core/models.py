@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
+from datetime import timedelta
 
 
 class Event(models.Model):
@@ -129,6 +133,35 @@ class Event(models.Model):
         ]
         return next((img.url for img in slider_images if img), '/static/default-thumbnail.jpg')
 
+@receiver(post_save, sender=Event)
+def send_reminder_on_date_change(sender, instance, created, **kwargs):
+    """
+    Automatically send reminders when event date is changed to today or within 2 days
+    """
+    if not created:  # Only for updates, not new events
+        try:
+            today = timezone.now().date()
+            event_date = instance.date
+            
+            if event_date:
+                days_until_event = (event_date - today).days
+                
+                # Send reminder if event is today or within 2 days
+                if 0 <= days_until_event <= 2:
+                    print(f"🔄 Event date changed to {event_date} - sending automatic reminders")
+                    
+                    # Import here to avoid circular imports
+                    from core.views import send_event_reminder
+                    success = send_event_reminder(instance)
+                    
+                    if success:
+                        print(f"✅ Automatic reminders sent for event: {instance.header_text}")
+                    else:
+                        print(f"❌ Failed to send automatic reminders for event: {instance.header_text}")
+                        
+        except Exception as e:
+            print(f"❌ Error sending automatic reminders: {e}")
+
 class RSVP(models.Model):
     ATTENDING_CHOICES = (
         ('yes', 'Yes'),
@@ -136,6 +169,7 @@ class RSVP(models.Model):
     )
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='rsvps')
     full_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=50)
     number_of_guests = models.PositiveIntegerField(default=1)
     attending = models.CharField(max_length=3, choices=ATTENDING_CHOICES)

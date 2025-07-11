@@ -26,7 +26,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
-#  'django-insecure-!+tihbtuq5%j3)2-fd9d5=sq31=*ayo^(kuh_a&y(v5)qq5y-8'
 
 # SECRET_KEY = 'django-insecure-!+tihbtuq5%j3)2-fd9d5=sq31=*ayo^(kuh_a&y(v5)qq5y-8'
 
@@ -116,7 +115,7 @@ DATABASES = {
 
 
 
-# # Base directory
+# Base directory
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 # # Database configuration
@@ -205,3 +204,12 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Email settings for Gmail SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'contact.savemeaseatzambia@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'gzcg rpjb xqnn ffec')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

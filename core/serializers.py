@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from .models import Event, RSVP, Bridesmaid, Groomsman, ProgramItem
 
+class RSVPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RSVP
+        fields = ['id', 'full_name', 'email', 'phone_number', 'number_of_guests', 'attending', 'created_at']
+
 class BridesmaidSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bridesmaid

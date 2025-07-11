@@ -22,8 +22,8 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(RSVP)
 class RSVPAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'phone_number', 'number_of_guests', 'attending', 'event', 'created_at')
-    search_fields = ('full_name', 'phone_number', 'event__header_text')
+    list_display = ('full_name', 'email', 'phone_number', 'number_of_guests', 'attending', 'event', 'created_at')
+    search_fields = ('full_name', 'email', 'phone_number', 'event__header_text')
     list_filter = ('attending', 'event')
 
 admin.site.register(Bridesmaid)
