@@ -13,5 +13,12 @@ class CoreConfig(AppConfig):
         from core.scheduler_jobs import send_reminders_job
         scheduler = BackgroundScheduler()
         scheduler.add_jobstore(DjangoJobStore(), "default")
-        scheduler.add_job(send_reminders_job, 'interval', minutes=1, id='send_reminders_job', replace_existing=True)
+        scheduler.add_job(
+            send_reminders_job,
+            'cron',
+            hour=8,
+            minute=0,
+            id='send_reminders_job',
+            replace_existing=True
+        )
         scheduler.start()
