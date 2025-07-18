@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary',
     'cloudinary_storage',
+    'django_apscheduler',
+    
 
 ]
 
@@ -213,3 +215,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'contact.savemeaseatzambia@gmail.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'gzcg rpjb xqnn ffec')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# 
+TIME_ZONE = 'UTC'
+USE_TZ = True

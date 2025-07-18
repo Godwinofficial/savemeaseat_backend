@@ -47,7 +47,7 @@ def submit_rsvp(request, event_slug):
                 days_until_event = (event_date - today).days
                 
                 if days_until_event <= 2 and days_until_event >= 0:
-                    send_event_reminder(event)
+                    send_event_reminder_to_guests(event)
         except Exception as e:
             # Log error but don't break RSVP submission
             print(f"Error sending automatic reminder: {e}")
@@ -107,24 +107,16 @@ def event_detail_page(request, slug):
 
 # Example function to send reminder email to event guests
 
-def send_event_reminder(event):
-    # Get all RSVPs with emails for this event
+def send_event_reminder_to_guests(event):
     rsvps_with_emails = event.rsvps.filter(email__isnull=False).exclude(email='')
-    
     print(f"📧 Found {rsvps_with_emails.count()} RSVPs with emails for event: {event.header_text}")
-    
     if not rsvps_with_emails:
         print(f"❌ No RSVP emails found for event: {event.header_text}")
         return False
-    
     subject = f"Reminder: {event.header_text or 'Your Special Event'} is coming up!"
-    
-    # Send personalized email to each guest
     emails_sent = 0
     for rsvp in rsvps_with_emails:
-        guest_name = rsvp.full_name.split()[0] if rsvp.full_name else "Guest"  # Use first name
-        
-        # Professional HTML email template with personalized greeting
+        guest_name = rsvp.full_name.split()[0] if rsvp.full_name else "Guest"
         html_message = f"""
         <!DOCTYPE html>
         <html>
@@ -318,25 +310,29 @@ Save Me A Seat Zambia - Making your special moments unforgettable
     print(f"📊 Total emails sent: {emails_sent}")
     return emails_sent > 0
 
-# Test endpoint to manually send reminder emails
 @csrf_exempt
-def test_send_reminder(request, event_slug):
+def send_event_reminder(request, event_slug):
+    """
+    API endpoint to trigger reminders for a specific event. Only guests (RSVPs) linked to that event will receive reminders.
+    Requires a POST request with a secret key for basic security.
+    """
     if request.method == 'POST':
+        SECRET_KEY = 'reminder_secret_123'  # Change this to a secure value and keep it private
+        data = json.loads(request.body)
+        if data.get('secret_key') != SECRET_KEY:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
         event = get_object_or_404(Event, slug=event_slug)
         rsvp_emails = event.rsvps.filter(email__isnull=False).exclude(email='').values_list('email', flat=True)
-        
         if not rsvp_emails:
             return JsonResponse({'error': 'No RSVP emails found for this event'}, status=400)
-        
         try:
-            success = send_event_reminder(event)
+            success = send_event_reminder_to_guests(event)
             if success:
                 return JsonResponse({'success': True, 'message': f'Reminder sent to {len(rsvp_emails)} guests'})
             else:
                 return JsonResponse({'error': 'Failed to send email'}, status=500)
         except Exception as e:
             return JsonResponse({'error': f'Email error: {str(e)}'}, status=500)
-    
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 # Test endpoint to create sample RSVP data
@@ -397,7 +393,7 @@ def send_automatic_reminders(request):
         for event in events_2_days:
             print(f"🚀 Processing 2-day reminder for: {event.header_text}")
             try:
-                success = send_event_reminder(event)
+                success = send_event_reminder_to_guests(event)
                 if success:
                     rsvp_count = event.rsvps.filter(email__isnull=False).exclude(email='').count()
                     results['two_days_reminders'].append({
@@ -420,7 +416,7 @@ def send_automatic_reminders(request):
         for event in events_today:
             print(f"🚀 Processing same-day reminder for: {event.header_text}")
             try:
-                success = send_event_reminder(event)
+                success = send_event_reminder_to_guests(event)
                 if success:
                     rsvp_count = event.rsvps.filter(email__isnull=False).exclude(email='').count()
                     results['same_day_reminders'].append({
