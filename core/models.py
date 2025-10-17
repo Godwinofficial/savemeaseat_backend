@@ -101,6 +101,9 @@ class Event(models.Model):
 
     thank_you_message = models.TextField(default="Thank you for your love and support!", blank=True, null=True)
 
+    # When true, invitations are considered completed and further invitation actions should be blocked.
+    invitations_done = models.BooleanField(default=False, help_text="When true, invitations are marked done and further invitations should be blocked.")
+
     slug = models.SlugField(unique=True, blank=True)
 
     def save(self, *args, **kwargs):

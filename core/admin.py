@@ -15,7 +15,7 @@ class ProgramItemInline(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('header_text', 'additional_header_text', 'date', 'venue', 'country', 'slug')
+    list_display = ('header_text', 'additional_header_text', 'date', 'venue', 'country', 'invitations_done', 'slug')
     readonly_fields = ('slug',)
     search_fields = ('header_text', 'additional_header_text', 'bride_first_name', 'groom_first_name', 'date', 'slug')
     inlines = [BridesmaidInline, GroomsmanInline, ProgramItemInline]

@@ -47,6 +47,7 @@ class EventSerializer(serializers.ModelSerializer):
             'main_map_url',
             'gift_1', 'gift_2', 'gift_3', 'gift_4', 'gift_5',
             'thank_you_message',
+            'invitations_done',
             'slug',
             'bridesmaids',
             'groomsmen',
