@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | SaveMeASeat Zambia</title>
+    
+    <!-- Meta tags for social sharing -->
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:url" content="{{ url }}">
+    <meta property="og:type" content="website">
+    {% if image %}
+    <meta property="og:image" content="{{ image }}">
+    <meta property="og:image:secure_url" content="{{ image }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ image }}">
+    {% endif %}
+    
+    <meta name="twitter:title" content="{{ title }}">
+    <meta name="twitter:description" content="{{ description }}">
+    
+    <!-- Redirect script -->
+    <script>
+        // Redirect to savemeaseat Zambia after 3 seconds
+        setTimeout(function() {
+            window.location.href = "https://savemeaseatzambia.com/wedding/{{ wedding.slug }}/";
+        }, 3000);
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8f5f2 0%, #e7e5e4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #292524;
+        }
+        
+        .preview-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(166, 138, 100, 0.2);
+        }
+        
+        .couple-names {
+            font-size: 2.5rem;
+            color: #292524;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .wedding-date {
+            font-size: 1.2rem;
+            color: #a68a64;
+            margin-bottom: 20px;
+        }
+        
+        .venue {
+            font-size: 1rem;
+            color: #57534e;
+            margin-bottom: 30px;
+        }
+        
+        .redirect-message {
+            font-size: 1rem;
+            color: #57534e;
+            margin-bottom: 20px;
+        }
+        
+        .countdown {
+            font-size: 1.5rem;
+            color: #a68a64;
+            font-weight: bold;
+        }
+        
+        .manual-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #a68a64 0%, #b38b5d 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .manual-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(166, 138, 100, 0.3);
+        }
+        
+        @media (max-width: 600px) {
+            .preview-container {
+                margin: 20px;
+                padding: 30px;
+            }
+            
+            .couple-names {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="couple-names">{{ wedding.bride_name }} & {{ wedding.groom_name }}</h1>
+        <p class="wedding-date">{{ wedding.event_date|date:"F d, Y" }}</p>
+        <p class="venue">{{ wedding.venue_name }}</p>
+        
+        <p class="redirect-message">
+            You are being redirected to the wedding website...
+        </p>
+        <p class="countdown">Redirecting in <span id="countdown">3</span> seconds</p>
+        
+        <a href="https://savemeaseatzambia.com/wedding/{{ wedding.slug }}/" class="manual-link">
+            Go to Wedding Website
+        </a>
+    </div>
+    
+    <script>
+        // Countdown timer
+        let seconds = 3;
+        const countdownEl = document.getElementById('countdown');
+        
+        const interval = setInterval(function() {
+            seconds--;
+            countdownEl.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(interval);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

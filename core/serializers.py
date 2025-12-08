@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import Event, RSVP, Bridesmaid, Groomsman, ProgramItem
+from .models import (
+    Event, RSVP, Bridesmaid, Groomsman, ProgramItem,
+    EventType, WeddingEvent, WeddingSliderImage, WeddingBridesmaid,
+    WeddingGroomsman, WeddingGalleryImage, WeddingRSVP
+)
 
 class RSVPSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,3 +58,147 @@ class EventSerializer(serializers.ModelSerializer):
             'program',
         ]
         read_only_fields = ('slug',)
+
+
+# ==================== WEDDING EVENT SERIALIZERS ====================
+
+class EventTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventType
+        fields = ['id', 'name', 'display_name', 'description', 'is_active', 'created_at']
+        read_only_fields = ['created_at']
+
+
+class WeddingSliderImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingSliderImage
+        fields = ['id', 'image', 'title', 'subtitle', 'date_text', 'order']
+
+
+class WeddingBridesmaidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingBridesmaid
+        fields = ['id', 'name', 'role', 'description', 'image', 'order']
+
+
+class WeddingGroomsmanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingGroomsman
+        fields = ['id', 'name', 'role', 'description', 'image', 'order']
+
+
+class WeddingGalleryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingGalleryImage
+        fields = ['id', 'image', 'alt_text', 'is_featured', 'uploaded_at', 'order']
+        read_only_fields = ['uploaded_at']
+
+
+class WeddingRSVPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingRSVP
+        fields = [
+            'id', 'full_name', 'email', 'phone_number', 'number_of_guests',
+            'attending', 'dietary_requirements', 'message', 'created_at'
+        ]
+        read_only_fields = ['created_at']
+
+
+class WeddingEventSerializer(serializers.ModelSerializer):
+    """
+    Main Wedding Event Serializer with nested relationships
+    """
+    event_type = EventTypeSerializer(read_only=True)
+    event_type_id = serializers.PrimaryKeyRelatedField(
+        queryset=EventType.objects.filter(name='wedding'),
+        source='event_type',
+        write_only=True
+    )
+    slider_images = WeddingSliderImageSerializer(many=True, read_only=True)
+    bridesmaids = WeddingBridesmaidSerializer(many=True, read_only=True)
+    groomsmen = WeddingGroomsmanSerializer(many=True, read_only=True)
+    gallery_images = WeddingGalleryImageSerializer(many=True, read_only=True)
+    rsvps = WeddingRSVPSerializer(many=True, read_only=True)
+    
+    # Computed fields
+    couple_names = serializers.ReadOnlyField()
+    event_api_url = serializers.ReadOnlyField()
+    event_public_url = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = WeddingEvent
+        fields = [
+            # System
+            'id', 'event_type', 'event_type_id', 'slug', 'is_published', 'is_past_event',
+            'invitations_sent', 'created_at', 'updated_at',
+            
+            # Basic Information
+            'event_title', 'logo_text', 'event_date', 'event_location',
+            
+            # Color Theme
+            'primary_color', 'secondary_color', 'accent_color',
+            
+            # Countdown
+            'countdown_title',
+            
+            # Couple Information
+            'bride_name', 'bride_image', 'bride_description',
+            'groom_name', 'groom_image', 'groom_description',
+            
+            # Love Story
+            'story_paragraph1', 'story_highlight', 'story_paragraph2',
+            
+            # Venue Information
+            'venue_name', 'venue_description', 'venue_address',
+            'ceremony_time', 'reception_time', 'parking_info', 'transport_info',
+            
+            # Map Location
+            'map_method', 'map_latitude', 'map_longitude', 'map_place_name',
+            'map_formatted_address', 'google_maps_url',
+            
+            # Wedding Details
+            'dress_code', 'dress_code_description',
+            'accommodation_name', 'accommodation_address',
+            
+            # RSVP Settings
+            'rsvp_title', 'rsvp_subtitle', 'rsvp_background_image',
+            
+            # Footer
+            'footer_logo', 'footer_text', 'footer_date_location',
+            
+            # Nested relationships
+            'slider_images', 'bridesmaids', 'groomsmen', 'gallery_images', 'rsvps',
+            
+            # Computed fields
+            'couple_names', 'event_api_url', 'event_public_url',
+        ]
+        read_only_fields = ['slug', 'is_past_event', 'created_at', 'updated_at']
+
+
+class WeddingEventCreateSerializer(serializers.ModelSerializer):
+    """
+    Simplified serializer for creating wedding events
+    """
+    event_type_id = serializers.PrimaryKeyRelatedField(
+        queryset=EventType.objects.filter(name='wedding'),
+        source='event_type'
+    )
+    
+    class Meta:
+        model = WeddingEvent
+        fields = [
+            'event_type_id', 'event_title', 'logo_text', 'event_date', 'event_location',
+            'primary_color', 'secondary_color', 'accent_color', 'countdown_title',
+            'bride_name', 'bride_image', 'bride_description',
+            'groom_name', 'groom_image', 'groom_description',
+            'story_paragraph1', 'story_highlight', 'story_paragraph2',
+            'venue_name', 'venue_description', 'venue_address',
+            'ceremony_time', 'reception_time', 'parking_info', 'transport_info',
+            'map_method', 'map_latitude', 'map_longitude', 'map_place_name',
+            'map_formatted_address', 'google_maps_url',
+            'dress_code', 'dress_code_description',
+            'accommodation_name', 'accommodation_address',
+            'rsvp_title', 'rsvp_subtitle', 'rsvp_background_image',
+            'footer_logo', 'footer_text', 'footer_date_location',
+            'is_published',
+        ]

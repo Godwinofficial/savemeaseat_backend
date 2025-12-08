@@ -1,8 +1,8 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from core.models import Event
-from core.views import send_event_reminder_to_guests
+from core.models import Event, WeddingEvent  # Add other event types as needed
+from core.views import send_event_reminder_to_guests, send_wedding_reminder_to_guests
 
 @shared_task
 def send_event_reminders():
@@ -11,13 +11,24 @@ def send_event_reminders():
     one_day_from_now = today + timedelta(days=1)
     two_days_from_now = today + timedelta(days=2)
     three_days_from_now = today + timedelta(days=3)
-    print(f"[Celery] Task started at {now}")
-    events = Event.objects.filter(date__date__in=[today, one_day_from_now, two_days_from_now, three_days_from_now])
-    print(f"[Celery] Checking for events on: {today}, {one_day_from_now}, {two_days_from_now}, {three_days_from_now}. Events found: {events.count()}")
+    
+    # Base Events
+    print(f"[Celery] Checking base events...")
+    events = Event.objects.filter(date__date__in=[
+        today, one_day_from_now, two_days_from_now, three_days_from_now
+    ])
     for event in events:
-        print(f"[Celery] Event: {event.header_text} at {event.date}")
-        rsvps = event.rsvps.filter(email__isnull=False).exclude(email='')
-        print(f"[Celery] RSVPs with emails: {rsvps.count()}")
-        for rsvp in rsvps:
-            print(f"[Celery] Sending to: {rsvp.email}")
+        print(f"[Celery] Processing event: {event.header_text} on {event.date}")
         send_event_reminder_to_guests(event)
+    
+    # Wedding Events
+    print(f"[Celery] Checking wedding events...")
+    wedding_events = WeddingEvent.objects.filter(event_date__date__in=[
+        today, one_day_from_now, two_days_from_now, three_days_from_now
+    ])
+    for event in wedding_events:
+        print(f"[Celery] Processing wedding: {event.event_title} on {event.event_date}")
+        send_wedding_reminder_to_guests(event)
+    
+    # Add other event types (Birthday, Corporate) here when their models are created
+    print("[Celery] Reminder task completed")
