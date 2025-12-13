@@ -926,13 +926,15 @@ def wedding_page(request):
 
 def wedding_rsvp_submit(request, wedding_slug):
     """
-    Submit RSVP for a wedding event
-    POST /api/wedding-events/<slug>/rsvp/
+    Submit RSVP for a wedding event or get wedding details
+    POST /api/wedding-events/<slug>/rsvp/ - Submit RSVP
+    GET /api/wedding-events/<slug>/rsvp/ - Get wedding details and RSVPs
     """
+    wedding = get_object_or_404(WeddingEvent, slug=wedding_slug)
+    
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            wedding = get_object_or_404(WeddingEvent, slug=wedding_slug)
             
             rsvp = WeddingRSVP.objects.create(
                 wedding=wedding,
@@ -953,7 +955,58 @@ def wedding_rsvp_submit(request, wedding_slug):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     
+    elif request.method == 'GET':
+        # Return wedding details and existing RSVPs for testing/viewing
+        rsvps = WeddingRSVP.objects.filter(wedding=wedding).order_by('-created_at')
+        rsvp_data = []
+        for rsvp in rsvps:
+            rsvp_data.append({
+                'id': rsvp.id,
+                'full_name': rsvp.full_name,
+                'email': rsvp.email,
+                'phone_number': rsvp.phone_number,
+                'number_of_guests': rsvp.number_of_guests,
+                'attending': rsvp.attending,
+                'dietary_requirements': rsvp.dietary_requirements,
+                'message': rsvp.message,
+                'created_at': rsvp.created_at
+            })
+        
+        return JsonResponse({
+            'wedding': {
+                'id': wedding.id,
+                'slug': wedding.slug,
+                'event_title': wedding.event_title,
+                'bride_name': wedding.bride_name,
+                'groom_name': wedding.groom_name,
+                'event_date': wedding.event_date,
+                'venue_name': wedding.venue_name,
+                'venue_address': wedding.venue_address
+            },
+            'rsvps': rsvp_data,
+            'total_rsvps': len(rsvp_data)
+        })
+    
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+
+class WeddingRSVPListCreateView(generics.ListCreateAPIView):
+    """
+    List all RSVPs for a wedding or create a new one
+    GET /api/wedding-events/<slug>/rsvp/ - List RSVPs
+    POST /api/wedding-events/<slug>/rsvp/ - Create RSVP
+    """
+    serializer_class = WeddingRSVPSerializer
+    permission_classes = []  # Allow unauthenticated access
+    
+    def get_queryset(self):
+        wedding_slug = self.kwargs.get('wedding_slug')
+        return WeddingRSVP.objects.filter(wedding__slug=wedding_slug).order_by('-created_at')
+    
+    def perform_create(self, serializer):
+        wedding_slug = self.kwargs.get('wedding_slug')
+        wedding = get_object_or_404(WeddingEvent, slug=wedding_slug)
+        serializer.save(wedding=wedding)
 
 
 class WeddingRSVPListView(generics.ListAPIView):
@@ -970,31 +1023,68 @@ class WeddingRSVPListView(generics.ListAPIView):
 
 def wedding_rsvp_export_csv(request, wedding_slug):
     """
-    Export RSVPs to CSV
+    Export RSVPs to Excel file
     GET /api/wedding-events/<slug>/rsvp/export/
     """
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from openpyxl.utils import get_column_letter
+    except ImportError:
+        return JsonResponse({'error': 'openpyxl library not installed. Please run: pip install openpyxl'}, status=500)
+    
     wedding = get_object_or_404(WeddingEvent, slug=wedding_slug)
     rsvps = wedding.rsvps.all()
     
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="wedding_rsvp_{wedding_slug}.csv"'
+    # Create a new workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = f"RSVPs - {wedding.event_title}"
     
-    writer = csv.writer(response)
-    writer.writerow([
-        'Full Name', 'Email', 'Phone Number', 'Number of Guests',
-        'Attending', 'Dietary Requirements', 'Message', 'Created At'
-    ])
+    # Define headers
+    headers = ['Full Name', 'Email', 'Phone Number', 'Number of Guests', 'Attending', 'Created At']
     
-    for rsvp in rsvps:
-        writer.writerow([
-            rsvp.full_name,
-            rsvp.email or '',
-            rsvp.phone_number or '',
-            rsvp.number_of_guests,
-            rsvp.get_attending_display(),
-            rsvp.dietary_requirements or '',
-            rsvp.message or '',
-            rsvp.created_at.strftime('%Y-%m-%d %H:%M:%S')
-        ])
+    # Apply header styling
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+    
+    # Write headers with styling
+    for col_num, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
+    
+    # Write data rows
+    for row_num, rsvp in enumerate(rsvps, 2):
+        ws.cell(row=row_num, column=1, value=rsvp.full_name or '')
+        ws.cell(row=row_num, column=2, value=rsvp.email or '')
+        ws.cell(row=row_num, column=3, value=rsvp.phone_number or '')
+        ws.cell(row=row_num, column=4, value=rsvp.number_of_guests or 1)
+        ws.cell(row=row_num, column=5, value=rsvp.get_attending_display() or '')
+        ws.cell(row=row_num, column=6, value=rsvp.created_at.strftime('%Y-%m-%d %H:%M:%S') if rsvp.created_at else '')
+    
+    # Auto-adjust column widths
+    for col_num in range(1, len(headers) + 1):
+        column_letter = get_column_letter(col_num)
+        max_length = 0
+        for row in ws.iter_rows(min_col=col_num, max_col=col_num):
+            for cell in row:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Save workbook to response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="wedding_rsvp_{wedding_slug}.xlsx"'
+    
+    wb.save(response)
     
     return response

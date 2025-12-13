@@ -10,7 +10,7 @@ from .views import (
     WeddingBridesmaidListCreateView, WeddingBridesmaidDetailView,
     WeddingGroomsmanListCreateView, WeddingGroomsmanDetailView,
     WeddingGalleryImageListCreateView, WeddingGalleryImageDetailView,
-    WeddingRSVPListView
+    WeddingRSVPListCreateView, WeddingRSVPListView
 )
 from . import views
 from .wedding_preview import wedding_event_preview
@@ -53,7 +53,7 @@ urlpatterns = [
     path('wedding-gallery/<int:pk>/', WeddingGalleryImageDetailView.as_view(), name='wedding-gallery-detail'),
     
     # Wedding RSVP
-    path('wedding-events/<slug:wedding_slug>/rsvp/', views.wedding_rsvp_submit, name='wedding-rsvp-submit'),
+    path('wedding-events/<slug:wedding_slug>/rsvp/', WeddingRSVPListCreateView.as_view(), name='wedding-rsvp-submit'),
     path('wedding-events/<slug:wedding_slug>/rsvps/', WeddingRSVPListView.as_view(), name='wedding-rsvp-list'),
     path('wedding-events/<slug:wedding_slug>/rsvp/export/', views.wedding_rsvp_export_csv, name='wedding-rsvp-export'),
     

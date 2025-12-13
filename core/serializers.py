@@ -99,7 +99,7 @@ class WeddingRSVPSerializer(serializers.ModelSerializer):
         model = WeddingRSVP
         fields = [
             'id', 'full_name', 'email', 'phone_number', 'number_of_guests',
-            'attending', 'dietary_requirements', 'message', 'created_at'
+            'attending', 'created_at'
         ]
         read_only_fields = ['created_at']
 
