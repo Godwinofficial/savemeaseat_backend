@@ -29,5 +29,5 @@ def wedding_event_preview(request, wedding_slug):
         return render(request, 'wedding_event_preview.html', context)
     else:
         # Redirect to savemeaseat Zambia website with dynamic slug
-        redirect_url = f"https://savemeaseatzambia.com/wedding2.html?slug={wedding.slug}/"
+        redirect_url = f"https://savemeaseatzambia.com/wedding2.html?slug={wedding.slug}"
         return HttpResponseRedirect(redirect_url)
