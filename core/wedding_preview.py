@@ -24,7 +24,7 @@ def wedding_event_preview(request, wedding_slug):
             'title': wedding.event_title,
             'description': f"{wedding.bride_name} & {wedding.groom_name}'s Wedding",
             'image': wedding.bride_image.url if wedding.bride_image else None,
-            'url': f"http://savemeaseatzambia.com/api/wedding-events/{wedding.slug}/preview/",
+            'url': f"http://127.0.0.1:8000/api/wedding-events/{wedding.slug}/preview/",
         }
         return render(request, 'wedding_event_preview.html', context)
     else:
