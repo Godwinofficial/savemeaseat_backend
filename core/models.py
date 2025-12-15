@@ -341,11 +341,19 @@ class WeddingEvent(models.Model):
     # ===== 6. VENUE INFORMATION =====
     # CEREMONY DETAILS
     ceremony_date = models.DateField(
+        blank=True,
+        null=True,
         help_text='Ceremony date'
     )
-    ceremony_time = models.TimeField(help_text='Ceremony start time')
+    ceremony_time = models.TimeField(
+        blank=True,
+        null=True,
+        help_text='Ceremony start time'
+    )
     ceremony_venue_name = models.CharField(
         max_length=255,
+        blank=True,
+        null=True,
         help_text='Ceremony venue name (e.g., "St. Michael\'s Church")'
     )
     ceremony_venue_description = models.TextField(
@@ -353,7 +361,11 @@ class WeddingEvent(models.Model):
         null=True,
         help_text='Ceremony venue description'
     )
-    ceremony_venue_address = models.TextField(help_text='Ceremony venue full address')
+    ceremony_venue_address = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Ceremony venue full address'
+    )
     
     # RECEPTION DETAILS
     reception_date = models.DateField(
