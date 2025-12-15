@@ -339,22 +339,50 @@ class WeddingEvent(models.Model):
     )
     
     # ===== 6. VENUE INFORMATION =====
-    venue_name = models.CharField(
-        max_length=255,
-        help_text='Name of venue (e.g., "The Glass House")'
+    # CEREMONY DETAILS
+    ceremony_date = models.DateField(
+        help_text='Ceremony date'
     )
-    venue_description = models.TextField(
+    ceremony_time = models.TimeField(help_text='Ceremony start time')
+    ceremony_venue_name = models.CharField(
+        max_length=255,
+        help_text='Ceremony venue name (e.g., "St. Michael\'s Church")'
+    )
+    ceremony_venue_description = models.TextField(
         blank=True, 
         null=True,
-        help_text='Detailed venue description'
+        help_text='Ceremony venue description'
     )
-    venue_address = models.TextField(help_text='Full venue address')
-    ceremony_time = models.TimeField(help_text='Ceremony start time')
+    ceremony_venue_address = models.TextField(help_text='Ceremony venue full address')
+    
+    # RECEPTION DETAILS
+    reception_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text='Reception date'
+    )
     reception_time = models.TimeField(
         blank=True, 
         null=True,
         help_text='Reception start time'
     )
+    reception_venue_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text='Reception venue name (e.g., "The Glass House")'
+    )
+    reception_venue_description = models.TextField(
+        blank=True, 
+        null=True,
+        help_text='Reception venue description'
+    )
+    reception_venue_address = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Reception venue full address'
+    )
+    
     parking_info = models.TextField(
         blank=True, 
         null=True,

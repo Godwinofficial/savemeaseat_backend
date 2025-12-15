@@ -148,9 +148,16 @@ class WeddingEventSerializer(serializers.ModelSerializer):
             # Love Story
             'story_paragraph1', 'story_highlight', 'story_paragraph2',
             
-            # Venue Information
-            'venue_name', 'venue_description', 'venue_address',
-            'ceremony_time', 'reception_time', 'parking_info', 'transport_info',
+            # Venue Information - Ceremony
+            'ceremony_date', 'ceremony_time', 'ceremony_venue_name', 
+            'ceremony_venue_description', 'ceremony_venue_address',
+            
+            # Venue Information - Reception
+            'reception_date', 'reception_time', 'reception_venue_name',
+            'reception_venue_description', 'reception_venue_address',
+            
+            # Additional Venue Info
+            'parking_info', 'transport_info',
             
             # Map Location
             'map_method', 'map_latitude', 'map_longitude', 'map_place_name',
@@ -192,8 +199,11 @@ class WeddingEventCreateSerializer(serializers.ModelSerializer):
             'bride_name', 'bride_image', 'bride_description',
             'groom_name', 'groom_image', 'groom_description',
             'story_paragraph1', 'story_highlight', 'story_paragraph2',
-            'venue_name', 'venue_description', 'venue_address',
-            'ceremony_time', 'reception_time', 'parking_info', 'transport_info',
+            'ceremony_date', 'ceremony_time', 'ceremony_venue_name', 
+            'ceremony_venue_description', 'ceremony_venue_address',
+            'reception_date', 'reception_time', 'reception_venue_name',
+            'reception_venue_description', 'reception_venue_address',
+            'parking_info', 'transport_info',
             'map_method', 'map_latitude', 'map_longitude', 'map_place_name',
             'map_formatted_address', 'google_maps_url',
             'dress_code', 'dress_code_description',

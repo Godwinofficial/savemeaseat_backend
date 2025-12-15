@@ -166,8 +166,12 @@ class WeddingEventAdmin(admin.ModelAdmin):
         }),
         ('Venue Information', {
             'fields': (
-                'venue_name', 'venue_address', 'venue_description',
-                'ceremony_time', 'reception_time',
+                ('ceremony_date', 'ceremony_time'),
+                ('ceremony_venue_name', 'ceremony_venue_description'),
+                'ceremony_venue_address',
+                ('reception_date', 'reception_time'),
+                ('reception_venue_name', 'reception_venue_description'),
+                'reception_venue_address',
                 'parking_info', 'transport_info'
             )
         }),
