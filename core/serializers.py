@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Event, RSVP, Bridesmaid, Groomsman, ProgramItem,
     EventType, WeddingEvent, WeddingSliderImage, WeddingBridesmaid,
-    WeddingGroomsman, WeddingGalleryImage, WeddingRSVP
+    WeddingGroomsman, WeddingGalleryImage, WeddingRSVP, WeddingGift
 )
 
 class RSVPSerializer(serializers.ModelSerializer):
@@ -104,6 +104,16 @@ class WeddingRSVPSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at']
 
 
+class WeddingGiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeddingGift
+        fields = [
+            'id', 'gift_type', 'provider', 'account_name', 'account_number',
+            'instructions', 'url', 'is_active', 'order', 'created_at'
+        ]
+        read_only_fields = ['created_at']
+
+
 class WeddingEventSerializer(serializers.ModelSerializer):
     """
     Main Wedding Event Serializer with nested relationships
@@ -119,6 +129,7 @@ class WeddingEventSerializer(serializers.ModelSerializer):
     groomsmen = WeddingGroomsmanSerializer(many=True, read_only=True)
     gallery_images = WeddingGalleryImageSerializer(many=True, read_only=True)
     rsvps = WeddingRSVPSerializer(many=True, read_only=True)
+    gifts = WeddingGiftSerializer(many=True, read_only=True)
     
     # Computed fields
     couple_names = serializers.ReadOnlyField()
@@ -174,8 +185,8 @@ class WeddingEventSerializer(serializers.ModelSerializer):
             'footer_logo', 'footer_text', 'footer_date_location',
             
             # Nested relationships
-            'slider_images', 'bridesmaids', 'groomsmen', 'gallery_images', 'rsvps',
-            
+            'slider_images', 'bridesmaids', 'groomsmen', 'gallery_images', 'rsvps', 'gifts',
+
             # Computed fields
             'couple_names', 'event_api_url', 'event_public_url',
         ]

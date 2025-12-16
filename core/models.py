@@ -769,3 +769,42 @@ class WeddingRSVP(models.Model):
         verbose_name = 'Wedding RSVP'
         verbose_name_plural = 'Wedding RSVPs'
         ordering = ['-created_at']
+
+
+class WeddingGift(models.Model):
+    """
+    Gifts / Contributions for Wedding Events
+    Repeatable section so admin can add multiple gift methods (Airtel Money, Bank, Registry, etc.)
+    """
+    GIFT_TYPE_CHOICES = (
+        ('money', 'Money Transfer'),
+        ('bank', 'Bank Transfer'),
+        ('registry', 'Registry'),
+        ('other', 'Other'),
+    )
+
+    wedding = models.ForeignKey(
+        WeddingEvent,
+        on_delete=models.CASCADE,
+        related_name='gifts'
+    )
+    gift_type = models.CharField(max_length=20, choices=GIFT_TYPE_CHOICES, default='money')
+    provider = models.CharField(max_length=100, blank=True, null=True, help_text='Provider name e.g., Airtel Money')
+    account_name = models.CharField(max_length=255, blank=True, null=True, help_text='Account or recipient name')
+    account_number = models.CharField(max_length=100, blank=True, null=True, help_text='Phone number / account number')
+    instructions = models.TextField(blank=True, null=True, help_text='Any instructions for the contribution')
+    url = models.URLField(blank=True, null=True, help_text='Optional link (e.g., registry link)')
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Wedding Gift'
+        verbose_name_plural = 'Wedding Gifts'
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        label = self.provider or self.get_gift_type_display() or 'Gift'
+        if self.account_number:
+            return f"{self.wedding.event_title} - {label} ({self.account_number})"
+        return f"{self.wedding.event_title} - {label}"

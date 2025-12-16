@@ -7,6 +7,7 @@ from .models import (
     Event, RSVP, Bridesmaid, Groomsman, ProgramItem,
     EventType, WeddingEvent, WeddingSliderImage, WeddingBridesmaid,
     WeddingGroomsman, WeddingGalleryImage, WeddingRSVP
+    , WeddingGift
 )
 
 class BridesmaidInline(admin.TabularInline):
@@ -136,6 +137,12 @@ class WeddingRSVPInline(admin.TabularInline):
     fields = ('full_name', 'email', 'phone_number', 'number_of_guests', 
               'attending', 'dietary_requirements', 'message', 'created_at')
 
+
+class WeddingGiftInline(admin.TabularInline):
+    model = WeddingGift
+    extra = 1
+    fields = ('gift_type', 'provider', 'account_name', 'account_number', 'instructions', 'url', 'is_active', 'order')
+
 @admin.register(WeddingEvent)
 class WeddingEventAdmin(admin.ModelAdmin):
     list_display = ('event_title', 'bride_name', 'groom_name', 'event_date', 'is_published', 'is_past_event', 'rsvp_count', 'view_links')
@@ -211,6 +218,7 @@ class WeddingEventAdmin(admin.ModelAdmin):
         WeddingGroomsmanInline,
         WeddingGalleryImageInline,
         WeddingRSVPInline,
+        WeddingGiftInline,
     ]
     
     def event_api_url(self, obj):
@@ -307,3 +315,11 @@ class WeddingRSVPAdmin(admin.ModelAdmin):
     search_fields = ('full_name', 'email', 'phone_number', 'wedding__event_title')
     readonly_fields = ('created_at',)
     date_hierarchy = 'created_at'
+
+
+@admin.register(WeddingGift)
+class WeddingGiftAdmin(admin.ModelAdmin):
+    list_display = ('wedding', 'gift_type', 'provider', 'account_number', 'is_active', 'order')
+    list_filter = ('gift_type', 'is_active', 'wedding')
+    search_fields = ('provider', 'account_name', 'account_number', 'wedding__event_title')
+    list_editable = ('is_active', 'order')
